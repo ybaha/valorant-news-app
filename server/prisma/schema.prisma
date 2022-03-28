@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Comment {
+  id        String   @id @unique @default(uuid())
+  userId    String
+  createdAt DateTime @default(now())
+
+  Posts   Post?   @relation(fields: [postsId], references: [id])
+  postsId String?
+}
+
+model Post {
+  id          String   @id @unique @default(uuid())
+  header      String?
+  text        String?
+  videoUrl    String?
+  imageUrl    String?
+  tags        String[]
+  createdAt   DateTime @default(now())
+  valid       Boolean  @default(true)
+  author      String   @default("admin")
+  upvotes     Int      @default(0)
+  downvotes   Int      @default(0)
+  reportCount Int      @default(0)
+
+  comments Comment[]
+}

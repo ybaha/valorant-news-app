@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "valoranttips",
+    "slug": "valoranttips",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/valorant_logo.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.bahastudio.valoranttips",
+      "buildNumber": "1.0.0",
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/valorant_logo.png",
+        "backgroundColor": "#000000"
+      },
+      "versionCode": 1,
+      "package": "com.bahastudio.valoranttips"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
