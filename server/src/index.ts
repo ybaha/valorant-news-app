@@ -69,6 +69,72 @@ app.post("/post/create", async (req, res) => {
   res.send(post);
 });
 
+app.post("/post/report", async (req, res) => {
+  console.log(req.body);
+  const postId = req.body.postId;
+  const isUndo = req.body.isUndo;
+  if (!postId || typeof isUndo == "undefined") return;
+
+  console.log(isUndo);
+
+  const val = isUndo ? -1 : 1;
+
+  const post = await prisma.post.update({
+    where: { id: postId },
+    data: { reportCount: { increment: val } },
+  });
+
+  return res.send({ reportCount: post.reportCount });
+});
+
+app.post("/post/vote", async (req, res) => {
+  const {
+    shouldUndoDownvoteFirst,
+    shouldUndoUpvoteFirst,
+    upvote,
+    downvote,
+    postId,
+  } = req.body;
+  let post;
+
+  if (upvote) {
+    if (shouldUndoUpvoteFirst)
+      post = await prisma.post.update({
+        where: { id: postId },
+        data: { upvotes: { decrement: 1 } },
+      });
+    else if (shouldUndoDownvoteFirst)
+      post = await prisma.post.update({
+        where: { id: postId },
+        data: { upvotes: { increment: 1 }, downvotes: { increment: -1 } },
+      });
+    else
+      post = await prisma.post.update({
+        where: { id: postId },
+        data: { upvotes: { increment: 1 } },
+      });
+  }
+  if (downvote) {
+    if (shouldUndoDownvoteFirst)
+      post = await prisma.post.update({
+        where: { id: postId },
+        data: { downvotes: { decrement: 1 } },
+      });
+    else if (shouldUndoUpvoteFirst)
+      post = await prisma.post.update({
+        where: { id: postId },
+        data: { upvotes: { increment: -1 }, downvotes: { increment: 1 } },
+      });
+    else
+      post = await prisma.post.update({
+        where: { id: postId },
+        data: { downvotes: { increment: 1 } },
+      });
+  }
+
+  return res.send(post);
+});
+
 // app.post('post/update/:id')
 
 app.listen(port, () => {

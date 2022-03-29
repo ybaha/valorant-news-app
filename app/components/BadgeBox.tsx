@@ -3,7 +3,11 @@ import { Text, Box, ScrollView, Pressable } from "native-base";
 import { useMainStore } from "../store/main";
 import { maps } from "./Post/FilterModal";
 
-type BadgeBoxProps = { badgeTexts: string | string[]; selectable?: boolean };
+type BadgeBoxProps = {
+  badgeTexts: string | string[];
+  selectable?: boolean;
+  maxWidth?: string;
+};
 
 const BadgeBox: React.FC<BadgeBoxProps> = (p) => {
   if (typeof p.badgeTexts == "string") p.badgeTexts = [p.badgeTexts];
@@ -29,7 +33,15 @@ const BadgeBox: React.FC<BadgeBoxProps> = (p) => {
   };
 
   return (
-    <ScrollView horizontal={true} bounces alwaysBounceHorizontal>
+    <ScrollView
+      horizontal={true}
+      bounces
+      alwaysBounceHorizontal
+      maxWidth={p.maxWidth}
+      borderRadius={12}
+      overflow="hidden"
+      // background="red.500"
+    >
       {p.badgeTexts.map((text, i) => {
         let selected = false;
         if (p.selectable && filters.includes(text)) selected = true;

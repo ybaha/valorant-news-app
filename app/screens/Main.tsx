@@ -9,6 +9,7 @@ import { Post as PostType } from "../../server/node_modules/.prisma/client";
 import axios from "axios";
 import { useMainStore } from "../store/main";
 import PingIcon from "../components/PingIcon";
+import usePostStore from "../store/post";
 
 const Main = () => {
   const modalizeRef = React.useRef<Modalize>();
@@ -80,16 +81,7 @@ const Main = () => {
           )
         ) : posts && posts.length ? (
           posts.map((p, idx) => (
-            <Post
-              key={p.header}
-              name={idx.toString()}
-              videoUrl={p.videoUrl}
-              header={p.header}
-              text={p.text}
-              badges={p.tags}
-              upvotes={p.upvotes}
-              downvotes={p.downvotes}
-            ></Post>
+            <Post name={idx.toString()} key={p.header} data={p}></Post>
           ))
         ) : (
           <View justifyContent="center" alignItems="center" mt={8}>

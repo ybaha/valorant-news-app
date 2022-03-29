@@ -11,6 +11,7 @@ import React from "react";
 import { Modalize } from "react-native-modalize";
 import { useMainStore } from "../../store/main";
 import BadgeBox from "../BadgeBox";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Modal = React.forwardRef((props, ref) => {
   const { setTriggerFetch, filters, setFilters } = useMainStore();
@@ -72,6 +73,9 @@ const Modal = React.forwardRef((props, ref) => {
         >
           Apply Filters
         </Button>
+        <Text onPress={() => AsyncStorage.clear()} mt={16}>
+          Reset Async Storage
+        </Text>
       </View>
     </Modalize>
   );
