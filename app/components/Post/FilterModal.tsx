@@ -8,94 +8,104 @@ import {
   Button,
 } from "native-base";
 import React from "react";
-import { useMainStore } from "../../store/main";
 import BadgeBox from "../BadgeBox";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import BottomSheet from "@gorhom/bottom-sheet";
-import useModalStore from "../../store/modal";
 
-const Modal = React.forwardRef((props, ref) => {
-  const { setTriggerFetch, filters, setFilters } = useMainStore();
-  const snapPoints = React.useMemo(() => ["50%", "75%"], []);
+const Modal = React.forwardRef(
+  (
+    props: { mainFilters: string[]; setMainFilters: (s: string[]) => void },
+    ref
+  ) => {
+    const snapPoints = React.useMemo(() => ["50%", "75%"], []);
 
-  return (
-    <BottomSheet
-      ref={ref as any}
-      snapPoints={snapPoints}
-      index={-1}
-      enableContentPanningGesture
-      backgroundStyle={{
-        backgroundColor: "#121212",
-        borderTopColor: "#363636",
-        borderWidth: 1,
-      }}
-      handleIndicatorStyle={{ backgroundColor: "white" }}
-      // TODO: breaks scrollview
-      // backdropComponent={FilterModalBackdrop}
-      enablePanDownToClose
-    >
-      <View p={4}>
-        {/* Maps */}
-        <ColoredBox color1="darkBlue.700" color2="light.900" title="Maps">
-          <ScrollView horizontal bounces>
-            {Object.keys(MapImageUris).map((e) => (
-              <Map name={e} key={e}></Map>
-            ))}
-          </ScrollView>
-        </ColoredBox>
+    const { mainFilters, setMainFilters } = props;
 
-        {/* Tags */}
-        <ColoredBox color1="rose.900" color2="light.900" title="Tags">
-          <BadgeBox
-            selectable
-            badgeTexts={["Bug", "Educational", "News", "Gameplay", "Meta"]}
-          ></BadgeBox>
-        </ColoredBox>
+    const [filters, setFilters] = React.useState<string[]>([]);
 
-        <View
-          mt={4}
-          // backgroundColor="red.800"
-          opacity={!!filters.length ? 1 : 0}
-          flexDirection="row"
-          justifyContent="space-between"
-        >
-          <Text color="white" maxWidth="85%">
-            Selected Filters: {filters.join(", ")}
-          </Text>
-          <Text
-            color="white"
-            underline
+    return (
+      <BottomSheet
+        ref={ref as any}
+        snapPoints={snapPoints}
+        index={1}
+        enableContentPanningGesture
+        backgroundStyle={{
+          backgroundColor: "#121212",
+          borderTopColor: "#363636",
+          borderWidth: 1,
+        }}
+        handleIndicatorStyle={{ backgroundColor: "white" }}
+        // TODO: breaks scrolview
+        // backdropComponent={FilterModalBackdrop}
+        enablePanDownToClose
+      >
+        <View p={4}>
+          {/* Maps */}
+          <ColoredBox color1="darkBlue.700" color2="light.900" title="Maps">
+            <ScrollView horizontal bounces>
+              {Object.keys(MapImageUris).map((e) => (
+                <Map
+                  filters={filters}
+                  setFilters={setFilters}
+                  name={e}
+                  key={e}
+                ></Map>
+              ))}
+            </ScrollView>
+          </ColoredBox>
+
+          {/* Tags */}
+          <ColoredBox color1="rose.900" color2="light.900" title="Tags">
+            <BadgeBox
+              // selectable
+              // filters={filters}
+              // setFilters={setFilters}
+              badgeTexts={["Bug", "Educational", "News", "Gameplay", "Meta"]}
+            ></BadgeBox>
+          </ColoredBox>
+
+          <View
+            mt={4}
+            // backgroundColor="red.800"
+            opacity={!!filters.length ? 1 : 0}
+            flexDirection="row"
+            justifyContent="space-between"
+          >
+            <Text color="white" maxWidth="85%">
+              Selected Filters: {filters.join(", ")}
+            </Text>
+            <Text
+              color="white"
+              underline
+              onPress={() => {
+                setFilters([]);
+              }}
+            >
+              Clear All
+            </Text>
+          </View>
+
+          <Button
+            // mt={272}
+            mt={4}
+            w={32}
+            // variant="outline"
+            // colorScheme="red"
+            borderColor="red.600"
             onPress={() => {
-              setFilters([]);
+              // setTriggerFetch(true);
+              setMainFilters(filters);
+              // fetch();
+              // @ts-ignore
+              ref?.current.close();
             }}
           >
-            Clear All
-          </Text>
+            Apply Filters
+          </Button>
         </View>
-
-        <Button
-          // mt={272}
-          mt={4}
-          w={32}
-          // variant="outline"
-          // colorScheme="red"
-          borderColor="red.600"
-          onPress={() => {
-            setTriggerFetch(true);
-            // fetch();
-            // @ts-ignore
-            ref?.current.close();
-          }}
-        >
-          Apply Filters
-        </Button>
-        <Text onPress={() => AsyncStorage.clear()} mt={16}>
-          Reset Async Storage
-        </Text>
-      </View>
-    </BottomSheet>
-  );
-});
+      </BottomSheet>
+    );
+  }
+);
 
 type ColoredBoxProps = {
   color1: string;
@@ -139,14 +149,29 @@ const MapImageUris = {
   Bind: require("../../assets/bind.png"),
 };
 
-const Map: React.FC<{ name: string }> = ({ name }) => {
-  const { filters, toggleFilters } = useMainStore();
-  const isFiltersSelected = filters.includes(name);
+const toggleFilters = (
+  filter: string,
+  filters?: string[],
+  setFilters?: (s: string[]) => void
+) => {
+  if (!filters || !filter || !setFilters) return;
 
-  const width = "104px";
+  filters.includes(filter)
+    ? setFilters(filters.filter((i) => i !== filter))
+    : setFilters([...filters, filter]);
+};
+
+const Map: React.FC<{
+  name: string;
+  filters?: string[];
+  setFilters?: (s: string[]) => void;
+}> = ({ name, filters, setFilters }) => {
+  const isFiltersSelected = filters?.includes(name);
+
+  const width = "102px";
 
   return (
-    <Pressable onPress={() => toggleFilters(name)}>
+    <Pressable onPress={() => toggleFilters(name, filters, setFilters)}>
       <Box
         width={width}
         justifyContent="center"
@@ -188,4 +213,4 @@ const Map: React.FC<{ name: string }> = ({ name }) => {
   );
 };
 
-export default React.memo(Modal);
+export default Modal;

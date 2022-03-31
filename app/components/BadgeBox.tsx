@@ -1,6 +1,5 @@
 import React from "react";
 import { Text, Box, ScrollView, Pressable } from "native-base";
-import { useMainStore } from "../store/main";
 
 const maps = ["Haven", "Fracture", "Ascent", "Icebox", "Split", "Bind"];
 
@@ -8,11 +7,21 @@ type BadgeBoxProps = {
   badgeTexts: string | string[];
   selectable?: boolean;
   maxWidth?: string;
+  filters?: string[];
+  setFilters?: (e: string[]) => void;
 };
 
 const BadgeBox: React.FC<BadgeBoxProps> = (p) => {
   if (typeof p.badgeTexts == "string") p.badgeTexts = [p.badgeTexts];
-  const { filters, toggleFilters } = useMainStore();
+  const { filters, setFilters } = p;
+
+  const toggleFilters = (filter: string) => {
+    if (!filters || !setFilters) return;
+
+    filters.includes(filter)
+      ? setFilters(filters.filter((i) => i !== filter))
+      : setFilters([...filters, filter]);
+  };
 
   const colors = {
     Educational: "green",
@@ -46,7 +55,8 @@ const BadgeBox: React.FC<BadgeBoxProps> = (p) => {
     >
       {p.badgeTexts.map((text, i) => {
         let selected = false;
-        if (p.selectable && filters.includes(text)) selected = true;
+        if (p.selectable && filters!.includes(text)) selected = true;
+
         return (
           <Pressable
             key={i}

@@ -6,7 +6,6 @@ import Post from "../components/Post/Post";
 import { Feather } from "@expo/vector-icons";
 import { Post as PostType } from "../../server/node_modules/.prisma/client";
 import axios from "axios";
-import { useMainStore } from "../store/main";
 import PingIcon from "../components/PingIcon";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
@@ -15,15 +14,11 @@ const Main = React.forwardRef(
     const [error, setError] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [posts, setPosts] = React.useState<PostType[]>([]);
-
-    const { setTriggerFetch, filters, triggerFetch } = useMainStore();
+    const [filters, setFilters] = React.useState([] as string[]);
 
     console.log("main component rendered");
 
     const fetch = async () => {
-      console.log("fetch fired ");
-      console.log(filters);
-
       let res,
         searchParams = filters.join(","),
         url = "http://192.168.0.18:3002/post";
@@ -38,15 +33,19 @@ const Main = React.forwardRef(
       } finally {
         setPosts(res?.data.posts);
         setLoading(false);
-        setTriggerFetch(false);
       }
     };
 
     React.useEffect(() => {
-      if (!triggerFetch) return;
-      console.log("ue2");
+      console.log("yas");
       fetch();
-    }, [triggerFetch]);
+    }, [filters]);
+
+    // React.useEffect(() => {
+    //   if (!triggerFetch) return;
+    //   console.log("ue2");
+    //   fetch();
+    // }, [triggerFetch]);
 
     return (
       <ScreenLayout px={0} py={0}>
@@ -67,7 +66,11 @@ const Main = React.forwardRef(
             </View>
           )}
         </ScrollView>
-        <Modal ref={ref}></Modal>
+        <Modal
+          mainFilters={filters}
+          setMainFilters={setFilters}
+          ref={ref}
+        ></Modal>
       </ScreenLayout>
     );
   }
