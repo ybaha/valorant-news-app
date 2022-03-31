@@ -1,7 +1,6 @@
 import { View, Text, Pressable, Button } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import React from "react";
-import ButtonGhost from "../ButtonGhost";
 import axios from "axios";
 import usePostStore, { InteractedPost } from "../../store/post";
 
@@ -47,8 +46,12 @@ const PostButtons: React.FC<PostButtonsProps> = ({
       console.log(e);
     }
     if (typeof res?.data.reportCount !== "undefined")
-      setInteractedPosts({ postId, reported: !isReported } as InteractedPost);
-    console.log({ interactedPosts });
+      setInteractedPosts({
+        postId,
+        reported: !isReported,
+        upvoted: isUpvoted,
+        downvoted: isDownvoted,
+      });
   };
 
   const handleVote = async ({ isUpvote }: { isUpvote: boolean }) => {
@@ -67,9 +70,13 @@ const PostButtons: React.FC<PostButtonsProps> = ({
         req.shouldUndoUpvoteFirst = true;
         upvoted = false;
       }
-
       req.upvote = true;
-      setInteractedPosts({ postId, upvoted } as InteractedPost);
+      setInteractedPosts({
+        postId,
+        upvoted,
+        downvoted: false,
+        reported: isReported,
+      });
     }
     if (!isUpvote) {
       let downvoted = true;
@@ -80,7 +87,12 @@ const PostButtons: React.FC<PostButtonsProps> = ({
       }
 
       req.downvote = true;
-      setInteractedPosts({ postId, downvoted } as InteractedPost);
+      setInteractedPosts({
+        postId,
+        downvoted,
+        upvoted: false,
+        reported: isReported,
+      });
     }
     const res = await axios.post("http://192.168.0.18:3002/post/vote", req);
     setVotes({ upvotes: res.data.upvotes, downvotes: res.data.downvotes });

@@ -38,6 +38,9 @@ const handleInteraction = (ip: InteractedPost[], p: InteractedPost) => {
 
   ip.push(post);
 
+  console.log(p);
+  console.log(ip);
+
   return ip;
 };
 

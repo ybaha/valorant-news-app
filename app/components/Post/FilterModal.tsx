@@ -8,18 +8,31 @@ import {
   Button,
 } from "native-base";
 import React from "react";
-import { Modalize } from "react-native-modalize";
 import { useMainStore } from "../../store/main";
 import BadgeBox from "../BadgeBox";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import BottomSheet from "@gorhom/bottom-sheet";
+import useModalStore from "../../store/modal";
 
 const Modal = React.forwardRef((props, ref) => {
   const { setTriggerFetch, filters, setFilters } = useMainStore();
+  const snapPoints = React.useMemo(() => ["50%", "75%"], []);
+
   return (
-    <Modalize
-      modalHeight={600}
-      modalStyle={{ backgroundColor: "#121212" }}
+    <BottomSheet
       ref={ref as any}
+      snapPoints={snapPoints}
+      index={-1}
+      enableContentPanningGesture
+      backgroundStyle={{
+        backgroundColor: "#121212",
+        borderTopColor: "#363636",
+        borderWidth: 1,
+      }}
+      handleIndicatorStyle={{ backgroundColor: "white" }}
+      // TODO: breaks scrollview
+      // backdropComponent={FilterModalBackdrop}
+      enablePanDownToClose
     >
       <View p={4}>
         {/* Maps */}
@@ -69,6 +82,9 @@ const Modal = React.forwardRef((props, ref) => {
           borderColor="red.600"
           onPress={() => {
             setTriggerFetch(true);
+            // fetch();
+            // @ts-ignore
+            ref?.current.close();
           }}
         >
           Apply Filters
@@ -77,7 +93,7 @@ const Modal = React.forwardRef((props, ref) => {
           Reset Async Storage
         </Text>
       </View>
-    </Modalize>
+    </BottomSheet>
   );
 });
 
@@ -122,8 +138,6 @@ const MapImageUris = {
   Split: require("../../assets/split.png"),
   Bind: require("../../assets/bind.png"),
 };
-
-export const maps = Object.keys(MapImageUris);
 
 const Map: React.FC<{ name: string }> = ({ name }) => {
   const { filters, toggleFilters } = useMainStore();
@@ -174,4 +188,4 @@ const Map: React.FC<{ name: string }> = ({ name }) => {
   );
 };
 
-export default Modal;
+export default React.memo(Modal);

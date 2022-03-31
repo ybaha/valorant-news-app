@@ -1,7 +1,8 @@
 import React from "react";
 import { Text, Box, ScrollView, Pressable } from "native-base";
 import { useMainStore } from "../store/main";
-import { maps } from "./Post/FilterModal";
+
+const maps = ["Haven", "Fracture", "Ascent", "Icebox", "Split", "Bind"];
 
 type BadgeBoxProps = {
   badgeTexts: string | string[];
@@ -40,6 +41,7 @@ const BadgeBox: React.FC<BadgeBoxProps> = (p) => {
       maxWidth={p.maxWidth}
       borderRadius={12}
       overflow="hidden"
+      showsHorizontalScrollIndicator={false}
       // background="red.500"
     >
       {p.badgeTexts.map((text, i) => {

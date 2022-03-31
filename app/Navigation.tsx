@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Image,
-  NativeBaseProvider,
-  Pressable,
-  Text,
-  View,
-} from "native-base";
+import { Image, NativeBaseProvider, Text, View } from "native-base";
 import {
   createDrawerNavigator,
   DrawerItemList,
@@ -15,6 +8,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import Main from "./screens/Main";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native";
+import useModalStore from "./store/modal";
+import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
 
 const Drawer = createDrawerNavigator();
 
@@ -33,6 +28,9 @@ const config = {
 };
 
 const Navigation = () => {
+  const modalRef = React.useRef<BottomSheet>(null);
+  const MainWrapper = () => <Main ref={modalRef}></Main>;
+
   return (
     <NativeBaseProvider config={config}>
       <NavigationContainer>
@@ -58,13 +56,28 @@ const Navigation = () => {
           )}
           screenOptions={{
             headerRight: () => (
-              <Image
-                source={require("./assets/valorant_logo.png")}
-                alt="Valorant Logo"
-                width={16}
-                height={"40%"}
-                resizeMode={"contain"}
-              ></Image>
+              // <Image
+              //   source={require("./assets/valorant_logo.png")}
+              //   alt="Valorant Logo"
+              //   width={16}
+              //   height={"40%"}
+              //   resizeMode={"contain"}
+              // ></Image>
+              <View
+                justifyContent="center"
+                alignItems="flex-end"
+                mr={4}
+                h="full"
+                style={{ width: 128 }}
+              >
+                <Text
+                  color="white"
+                  backgroundColor="black"
+                  onPress={() => modalRef?.current?.expand()}
+                >
+                  Filter
+                </Text>
+              </View>
             ),
             drawerActiveBackgroundColor: "gray",
             headerTintColor: "white",
@@ -99,8 +112,9 @@ const Navigation = () => {
               // ),
             }}
             name="Feed"
-            component={Main}
-          />
+          >
+            {() => <Main ref={modalRef}></Main>}
+          </Drawer.Screen>
           <Drawer.Screen name="Article" component={Article} />
         </Drawer.Navigator>
       </NavigationContainer>

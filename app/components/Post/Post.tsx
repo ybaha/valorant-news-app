@@ -36,12 +36,18 @@ const Post: React.FC<PostProps> = (props) => {
         },
       }}
     >
-      <View flexDirection="row" justifyContent="space-between">
-        <Badges badgeTexts={props.data.tags} maxWidth="80%" />
-        <Text color="gray.300">{date.toString()}</Text>
+      <View
+        flexDirection="row"
+        justifyContent="space-between"
+        alignItems={"center"}
+      >
+        <Badges badgeTexts={props.data.tags} />
+        <Text fontSize={12} pl={2} color="gray.300">
+          {date.toString()}
+        </Text>
       </View>
       {props.data.header && (
-        <Text color="gray.100" fontSize={22}>
+        <Text color="gray.100" fontSize={24} mt={1} mb={1}>
           {props.data.header}
         </Text>
       )}
