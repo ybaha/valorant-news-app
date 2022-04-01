@@ -1,9 +1,8 @@
 import { StyleSheet } from "react-native";
 import { AVPlaybackStatus, Video } from "expo-av";
 import React from "react";
-import { Button, View, Text, Box, Row } from "native-base";
+import { View, Text, Box } from "native-base";
 import Badges from "../BadgeBox";
-import { AntDesign } from "@expo/vector-icons";
 import PostButtons from "./PostButtons";
 import { Post as PostType } from "../../../server/node_modules/.prisma/client";
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { Text, Box, ScrollView, Pressable } from "native-base";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const maps = ["Haven", "Fracture", "Ascent", "Icebox", "Split", "Bind"];
 
@@ -9,6 +10,7 @@ type BadgeBoxProps = {
   maxWidth?: string;
   filters?: string[];
   setFilters?: (e: string[]) => void;
+  isBottomSheet?: boolean;
 };
 
 const BadgeBox: React.FC<BadgeBoxProps> = (p) => {
@@ -42,8 +44,10 @@ const BadgeBox: React.FC<BadgeBoxProps> = (p) => {
     return [`${color}.700`, `${color}.800`];
   };
 
+  const CustomView = p.isBottomSheet ? BottomSheetScrollView : ScrollView;
+
   return (
-    <ScrollView
+    <CustomView
       horizontal={true}
       bounces
       alwaysBounceHorizontal
@@ -87,7 +91,7 @@ const BadgeBox: React.FC<BadgeBoxProps> = (p) => {
           </Pressable>
         );
       })}
-    </ScrollView>
+    </CustomView>
   );
 };
 

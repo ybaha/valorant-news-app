@@ -1,9 +1,8 @@
-import { Button, Fab, Pressable, ScrollView, Text, View } from "native-base";
+import { ScrollView, Text, View } from "native-base";
 import React from "react";
 import ScreenLayout from "../components/Layout";
 import Modal from "../components/Post/FilterModal";
 import Post from "../components/Post/Post";
-import { Feather } from "@expo/vector-icons";
 import { Post as PostType } from "../../server/node_modules/.prisma/client";
 import axios from "axios";
 import PingIcon from "../components/PingIcon";
@@ -16,7 +15,7 @@ const Main = React.forwardRef(
     const [posts, setPosts] = React.useState<PostType[]>([]);
     const [filters, setFilters] = React.useState([] as string[]);
 
-    console.log("main component rendered");
+    // console.log("main component rendered");
 
     const fetch = async () => {
       let res,
@@ -37,15 +36,8 @@ const Main = React.forwardRef(
     };
 
     React.useEffect(() => {
-      console.log("yas");
       fetch();
     }, [filters]);
-
-    // React.useEffect(() => {
-    //   if (!triggerFetch) return;
-    //   console.log("ue2");
-    //   fetch();
-    // }, [triggerFetch]);
 
     return (
       <ScreenLayout px={0} py={0}>
@@ -69,15 +61,13 @@ const Main = React.forwardRef(
         <Modal
           mainFilters={filters}
           setMainFilters={setFilters}
+          modalOpen={props.modalOpen}
+          setModalOpen={props.setModalOpen}
           ref={ref}
-        ></Modal>
+        />
       </ScreenLayout>
     );
   }
 );
-
-const HOC = (p: any) => {
-  return <Main {...p}></Main>;
-};
 
 export default React.memo(Main);

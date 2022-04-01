@@ -28,8 +28,8 @@ const config = {
 };
 
 const Navigation = () => {
+  const [modalOpen, setModalOpen] = React.useState(false);
   const modalRef = React.useRef<BottomSheet>(null);
-  const MainWrapper = () => <Main ref={modalRef}></Main>;
 
   return (
     <NativeBaseProvider config={config}>
@@ -73,9 +73,12 @@ const Navigation = () => {
                 <Text
                   color="white"
                   backgroundColor="black"
-                  onPress={() => modalRef?.current?.expand()}
+                  onPress={() => {
+                    modalRef?.current?.expand();
+                    setModalOpen(true);
+                  }}
                 >
-                  Filter
+                  Filters
                 </Text>
               </View>
             ),
@@ -113,7 +116,13 @@ const Navigation = () => {
             }}
             name="Feed"
           >
-            {() => <Main ref={modalRef}></Main>}
+            {() => (
+              <Main
+                ref={modalRef}
+                modalOpen={modalOpen}
+                setModalOpen={setModalOpen}
+              ></Main>
+            )}
           </Drawer.Screen>
           <Drawer.Screen name="Article" component={Article} />
         </Drawer.Navigator>

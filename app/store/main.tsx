@@ -36,7 +36,6 @@ export const useMainStore = create<MainStoreProps>((set, get) => ({
     try {
       if (get().filters) url += `?tags=${searchParams}`;
       res = await axios.get(url);
-      console.log("fetched");
     } catch {
       console.log("error");
     } finally {

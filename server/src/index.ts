@@ -75,8 +75,6 @@ app.post("/post/report", async (req, res) => {
   const isUndo = req.body.isUndo;
   if (!postId || typeof isUndo == "undefined") return;
 
-  console.log(isUndo);
-
   const val = isUndo ? -1 : 1;
 
   const post = await prisma.post.update({

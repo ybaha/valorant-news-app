@@ -9,16 +9,21 @@ import {
 } from "native-base";
 import React from "react";
 import BadgeBox from "../BadgeBox";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import CustomBackdrop from "./FilterModalBackdrop";
+
+type ModalProps = {
+  mainFilters: string[];
+  setMainFilters: (s: string[]) => void;
+  modalOpen: boolean;
+  setModalOpen: (s: boolean) => void;
+};
 
 const Modal = React.forwardRef(
-  (
-    props: { mainFilters: string[]; setMainFilters: (s: string[]) => void },
-    ref
-  ) => {
-    const snapPoints = React.useMemo(() => ["60%"], []);
+  (props: ModalProps, ref: React.ForwardedRef<BottomSheet>) => {
+    const snapPoints = React.useMemo(() => ["55%"], []);
 
-    const { mainFilters, setMainFilters } = props;
+    const { mainFilters, setMainFilters, modalOpen, setModalOpen } = props;
 
     const [filters, setFilters] = React.useState<string[]>([]);
 
@@ -26,22 +31,37 @@ const Modal = React.forwardRef(
       <BottomSheet
         ref={ref as any}
         snapPoints={snapPoints}
-        index={0}
+        index={-1}
         enableContentPanningGesture={false}
+        enablePanDownToClose
         backgroundStyle={{
           backgroundColor: "#121212",
           borderTopColor: "#363636",
           borderWidth: 1,
         }}
         handleIndicatorStyle={{ backgroundColor: "white" }}
-        // TODO: breaks scrolview
-        // backdropComponent={FilterModalBackdrop}
-        enablePanDownToClose
+        // TODO: breaks scrollview
+        backdropComponent={(p) =>
+          modalOpen ? (
+            <CustomBackdrop
+              animatedIndex={p.animatedIndex}
+              animatedPosition={p.animatedPosition}
+              style={p.style}
+              modalRef={ref as any}
+              setModalOpen={setModalOpen}
+            />
+          ) : null
+        }
       >
         <View p={4}>
           {/* Maps */}
-          <ColoredBox color1="darkBlue.700" color2="light.900" title="Maps">
-            <ScrollView horizontal bounces>
+          <ColoredBox
+            color1="darkBlue.700"
+            color2="light.900"
+            title="Maps"
+            minHeight={32}
+          >
+            <BottomSheetScrollView horizontal bounces>
               {Object.keys(MapImageUris).map((e) => (
                 <Map
                   filters={filters}
@@ -50,21 +70,27 @@ const Modal = React.forwardRef(
                   key={e}
                 ></Map>
               ))}
-            </ScrollView>
+            </BottomSheetScrollView>
           </ColoredBox>
 
           {/* Tags */}
-          <ColoredBox color1="rose.900" color2="light.900" title="Tags">
+          <ColoredBox
+            color1="rose.900"
+            color2="light.900"
+            title="Tags"
+            minHeight={24}
+          >
             <BadgeBox
-              // selectable
-              // filters={filters}
-              // setFilters={setFilters}
+              selectable
+              filters={filters}
+              setFilters={setFilters}
               badgeTexts={["Bug", "Educational", "News", "Gameplay", "Meta"]}
+              isBottomSheet
             ></BadgeBox>
           </ColoredBox>
 
           <View
-            mt={4}
+            my={2}
             // backgroundColor="red.800"
             opacity={!!filters.length ? 1 : 0}
             flexDirection="row"
@@ -85,18 +111,16 @@ const Modal = React.forwardRef(
           </View>
 
           <Button
-            // mt={272}
-            mt={4}
             w={32}
             // variant="outline"
-            // colorScheme="red"
+            colorScheme="red"
             borderColor="red.600"
+            bg="red.800"
             onPress={() => {
-              // setTriggerFetch(true);
               setMainFilters(filters);
-              // fetch();
-              // @ts-ignore
+              //@ts-ignore
               ref?.current.close();
+              setModalOpen(false);
             }}
           >
             Apply Filters
@@ -111,6 +135,7 @@ type ColoredBoxProps = {
   color1: string;
   color2: string;
   title: string;
+  minHeight?: number;
 };
 
 const ColoredBox: React.FC<ColoredBoxProps> = (p) => {
@@ -118,6 +143,7 @@ const ColoredBox: React.FC<ColoredBoxProps> = (p) => {
 
   return (
     <Box
+      minHeight={p.minHeight || "auto"}
       mt={4}
       bg={{
         linearGradient: {
@@ -141,12 +167,12 @@ const ColoredBox: React.FC<ColoredBoxProps> = (p) => {
 };
 
 const MapImageUris = {
-  Haven: require("../../assets/haven.png"),
-  Fracture: require("../../assets/fracture.png"),
-  Icebox: require("../../assets/icebox.png"),
   Ascent: require("../../assets/ascent.png"),
-  Split: require("../../assets/split.png"),
   Bind: require("../../assets/bind.png"),
+  Fracture: require("../../assets/fracture.png"),
+  Haven: require("../../assets/haven.png"),
+  Icebox: require("../../assets/icebox.png"),
+  Split: require("../../assets/split.png"),
 };
 
 const toggleFilters = (

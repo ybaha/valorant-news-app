@@ -33,7 +33,6 @@ export default function CreateAccount() {
     },
   });
 
-  const onSubmit = (data: any) => console.log({ data });
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
   return (

@@ -17,10 +17,8 @@ type PostStore = {
 };
 
 const handleReport = (rp: string[], post: string) => {
-  console.log({ rpFirstState: rp });
   if (rp.includes(post)) rp.splice(rp.indexOf(post), 1);
   else rp.push(post);
-  console.log({ rpLastState: rp });
   return rp;
 };
 
@@ -37,9 +35,6 @@ const handleInteraction = (ip: InteractedPost[], p: InteractedPost) => {
   post = { ...p };
 
   ip.push(post);
-
-  console.log(p);
-  console.log(ip);
 
   return ip;
 };
