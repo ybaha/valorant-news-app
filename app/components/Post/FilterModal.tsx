@@ -16,7 +16,7 @@ const Modal = React.forwardRef(
     props: { mainFilters: string[]; setMainFilters: (s: string[]) => void },
     ref
   ) => {
-    const snapPoints = React.useMemo(() => ["50%", "75%"], []);
+    const snapPoints = React.useMemo(() => ["60%"], []);
 
     const { mainFilters, setMainFilters } = props;
 
@@ -26,8 +26,8 @@ const Modal = React.forwardRef(
       <BottomSheet
         ref={ref as any}
         snapPoints={snapPoints}
-        index={1}
-        enableContentPanningGesture
+        index={0}
+        enableContentPanningGesture={false}
         backgroundStyle={{
           backgroundColor: "#121212",
           borderTopColor: "#363636",
