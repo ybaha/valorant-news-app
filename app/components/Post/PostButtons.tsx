@@ -1,38 +1,57 @@
 import { View, Text, Pressable, Button } from "native-base";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import React from "react";
 import axios from "axios";
-import usePostStore, { InteractedPost } from "../../store/post";
+import usePostStore from "../../store/post";
+import { Post as PostType } from "../../../server/node_modules/.prisma/client";
 
 type PostButtonsProps = {
   upvotes: number | null;
   downvotes: number | null;
   postId: string;
+  postData: PostType;
 };
 
 const PostButtons: React.FC<PostButtonsProps> = ({
   upvotes,
   downvotes,
   postId,
+  postData,
 }) => {
   const [foo, setfoo] = React.useState(false);
-  const [upPressed, setUpPressed] = React.useState(false);
-  const [downPressed, setDownPressed] = React.useState(false);
+  const { interactedPosts, setInteractedPosts, togglePostBookmark } =
+    usePostStore();
+
+  const interactedPost = interactedPosts.find((p) => p.postId === postId);
+
+  const isReported = !!interactedPost?.reported;
+  const isUpvoted = !!interactedPost?.upvoted;
+  const isDownvoted = !!interactedPost?.downvoted;
+  const isBookmarked = !!interactedPost?.bookmarked;
+
+  const [upPressed, setUpPressed] = React.useState(isUpvoted);
+  const [downPressed, setDownPressed] = React.useState(isDownvoted);
+  const [bookmarked, setBookmarked] = React.useState(isBookmarked);
   const [votes, setVotes] = React.useState({
     upvotes: upvotes,
     downvotes: downvotes,
   });
-  const { interactedPosts, setInteractedPosts } = usePostStore();
-
-  const post = interactedPosts.find((p) => p.postId === postId);
-
-  const isReported = !!post?.reported;
-  const isUpvoted = !!post?.upvoted;
-  const isDownvoted = !!post?.downvoted;
 
   const getButtonColor = (pressed: boolean, voted: boolean) => {
     // TODO: pressed || upvoted
     return pressed || voted ? "red" : "white";
+  };
+
+  const handleBookmark = () => {
+    setBookmarked(!bookmarked);
+    togglePostBookmark(postData);
+    setInteractedPosts({
+      postId,
+      reported: isReported,
+      upvoted: isUpvoted,
+      downvoted: isDownvoted,
+      bookmarked: !bookmarked,
+    });
   };
 
   const handleReport = async () => {
@@ -51,6 +70,7 @@ const PostButtons: React.FC<PostButtonsProps> = ({
         reported: !isReported,
         upvoted: isUpvoted,
         downvoted: isDownvoted,
+        bookmarked,
       });
   };
 
@@ -76,6 +96,7 @@ const PostButtons: React.FC<PostButtonsProps> = ({
         upvoted,
         downvoted: false,
         reported: isReported,
+        bookmarked,
       });
     }
     if (!isUpvote) {
@@ -92,6 +113,7 @@ const PostButtons: React.FC<PostButtonsProps> = ({
         downvoted,
         upvoted: false,
         reported: isReported,
+        bookmarked,
       });
     }
     const res = await axios.post("http://192.168.0.18:3002/post/vote", req);
@@ -139,6 +161,15 @@ const PostButtons: React.FC<PostButtonsProps> = ({
           <Text color="gray.400" ml={2} mr={6}>
             {votes.downvotes}
           </Text>
+        </Pressable>
+
+        <Pressable flexDir="row" ml={2} onPress={handleBookmark}>
+          <FontAwesome
+            name={bookmarked ? "bookmark" : "bookmark-o"}
+            size={24}
+            color={bookmarked ? "white" : "gray"}
+            // color={"white"}
+          />
         </Pressable>
       </View>
 

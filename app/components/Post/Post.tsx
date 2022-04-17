@@ -73,6 +73,7 @@ const Post: React.FC<PostProps> = (props) => {
         upvotes={props.data.upvotes}
         downvotes={props.data.downvotes}
         postId={props.data.id}
+        postData={props.data}
       />
     </Box>
   );

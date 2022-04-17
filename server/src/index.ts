@@ -94,40 +94,43 @@ app.post("/post/vote", async (req, res) => {
     postId,
   } = req.body;
   let post;
-
-  if (upvote) {
-    if (shouldUndoUpvoteFirst)
-      post = await prisma.post.update({
-        where: { id: postId },
-        data: { upvotes: { decrement: 1 } },
-      });
-    else if (shouldUndoDownvoteFirst)
-      post = await prisma.post.update({
-        where: { id: postId },
-        data: { upvotes: { increment: 1 }, downvotes: { increment: -1 } },
-      });
-    else
-      post = await prisma.post.update({
-        where: { id: postId },
-        data: { upvotes: { increment: 1 } },
-      });
-  }
-  if (downvote) {
-    if (shouldUndoDownvoteFirst)
-      post = await prisma.post.update({
-        where: { id: postId },
-        data: { downvotes: { decrement: 1 } },
-      });
-    else if (shouldUndoUpvoteFirst)
-      post = await prisma.post.update({
-        where: { id: postId },
-        data: { upvotes: { increment: -1 }, downvotes: { increment: 1 } },
-      });
-    else
-      post = await prisma.post.update({
-        where: { id: postId },
-        data: { downvotes: { increment: 1 } },
-      });
+  try {
+    if (upvote) {
+      if (shouldUndoUpvoteFirst)
+        post = await prisma.post.update({
+          where: { id: postId },
+          data: { upvotes: { decrement: 1 } },
+        });
+      else if (shouldUndoDownvoteFirst)
+        post = await prisma.post.update({
+          where: { id: postId },
+          data: { upvotes: { increment: 1 }, downvotes: { increment: -1 } },
+        });
+      else
+        post = await prisma.post.update({
+          where: { id: postId },
+          data: { upvotes: { increment: 1 } },
+        });
+    }
+    if (downvote) {
+      if (shouldUndoDownvoteFirst)
+        post = await prisma.post.update({
+          where: { id: postId },
+          data: { downvotes: { decrement: 1 } },
+        });
+      else if (shouldUndoUpvoteFirst)
+        post = await prisma.post.update({
+          where: { id: postId },
+          data: { upvotes: { increment: -1 }, downvotes: { increment: 1 } },
+        });
+      else
+        post = await prisma.post.update({
+          where: { id: postId },
+          data: { downvotes: { increment: 1 } },
+        });
+    }
+  } catch (e) {
+    console.log("Can not update post", postId);
   }
 
   return res.send(post);

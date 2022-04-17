@@ -13,6 +13,7 @@ import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import CustomBackdrop from "./FilterModalBackdrop";
 import { agents, tags } from "../../utils/filter-constants";
 import { Dimensions } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type ModalProps = {
   mainFilters: string[];
@@ -24,7 +25,7 @@ type ModalProps = {
 const Modal = React.forwardRef(
   (props: ModalProps, ref: React.ForwardedRef<BottomSheet>) => {
     const dimensions = React.useMemo(() => Dimensions.get("window"), []);
-    // bottom sheet height = 510 + 100
+    // bottom sheet height = 510 + 100?
     const snapPoint = ((610 / dimensions.height) * 100).toFixed(0) + "%";
     const snapPoints = React.useMemo(() => [snapPoint], []);
 
@@ -153,6 +154,13 @@ const Modal = React.forwardRef(
             }}
           >
             Apply Filters
+          </Button>
+          <Button
+            onPress={() => {
+              AsyncStorage.clear();
+            }}
+          >
+            Clear
           </Button>
         </View>
       </BottomSheet>

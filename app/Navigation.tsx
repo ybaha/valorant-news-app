@@ -10,16 +10,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native";
 import useModalStore from "./store/modal";
 import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
+import Bookmarks from "./screens/Bookmarks";
 
 const Drawer = createDrawerNavigator();
-
-const Article = () => {
-  return (
-    <View>
-      <Text>Sealmar</Text>
-    </View>
-  );
-};
 
 const config = {
   dependencies: {
@@ -124,7 +117,9 @@ const Navigation = () => {
               ></Main>
             )}
           </Drawer.Screen>
-          <Drawer.Screen name="Article" component={Article} />
+          <Drawer.Screen name="Bookmarks">
+            {() => <Bookmarks></Bookmarks>}
+          </Drawer.Screen>
         </Drawer.Navigator>
       </NavigationContainer>
       {/* {user ? (
