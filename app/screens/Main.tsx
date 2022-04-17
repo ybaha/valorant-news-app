@@ -26,6 +26,7 @@ const Main = React.forwardRef(
         setLoading(true);
         if (filters) url += `?tags=${searchParams}`;
         res = await axios.get(url);
+        console.log({ url });
       } catch {
         console.log("error");
         setError(true);

@@ -11,6 +11,8 @@ import React from "react";
 import BadgeBox from "../BadgeBox";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import CustomBackdrop from "./FilterModalBackdrop";
+import { agents, tags } from "../../utils/filter-constants";
+import { Dimensions } from "react-native";
 
 type ModalProps = {
   mainFilters: string[];
@@ -21,7 +23,10 @@ type ModalProps = {
 
 const Modal = React.forwardRef(
   (props: ModalProps, ref: React.ForwardedRef<BottomSheet>) => {
-    const snapPoints = React.useMemo(() => ["55%"], []);
+    const dimensions = React.useMemo(() => Dimensions.get("window"), []);
+    // bottom sheet height = 510 + 100
+    const snapPoint = ((610 / dimensions.height) * 100).toFixed(0) + "%";
+    const snapPoints = React.useMemo(() => [snapPoint], []);
 
     const { mainFilters, setMainFilters, modalOpen, setModalOpen } = props;
 
@@ -53,7 +58,13 @@ const Modal = React.forwardRef(
           ) : null
         }
       >
-        <View p={4}>
+        <View
+          p={4}
+          // onLayout={(event) => {
+          //   var { x, y, width, height } = event.nativeEvent.layout;
+          //   console.log(x, y, width, height);
+          // }}
+        >
           {/* Maps */}
           <ColoredBox
             color1="darkBlue.700"
@@ -73,9 +84,26 @@ const Modal = React.forwardRef(
             </BottomSheetScrollView>
           </ColoredBox>
 
-          {/* Tags */}
+          {/* Agents */}
           <ColoredBox
             color1="rose.900"
+            color2="light.900"
+            title="Agents"
+            minHeight={32}
+          >
+            <BadgeBox
+              selectable
+              filters={filters}
+              setFilters={setFilters}
+              badgeTexts={agents}
+              isBottomSheet
+              doubleLayer
+            ></BadgeBox>
+          </ColoredBox>
+
+          {/* Tags */}
+          <ColoredBox
+            color1="green.900"
             color2="light.900"
             title="Tags"
             minHeight={24}
@@ -84,13 +112,13 @@ const Modal = React.forwardRef(
               selectable
               filters={filters}
               setFilters={setFilters}
-              badgeTexts={["Bug", "Educational", "News", "Gameplay", "Meta"]}
+              badgeTexts={tags}
               isBottomSheet
             ></BadgeBox>
           </ColoredBox>
 
           <View
-            my={2}
+            mt={4}
             // backgroundColor="red.800"
             opacity={!!filters.length ? 1 : 0}
             flexDirection="row"
@@ -104,6 +132,7 @@ const Modal = React.forwardRef(
               underline
               onPress={() => {
                 setFilters([]);
+                setMainFilters([]);
               }}
             >
               Clear All
