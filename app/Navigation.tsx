@@ -8,9 +8,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import Main from "./screens/Main";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native";
-import useModalStore from "./store/modal";
-import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
 import Bookmarks from "./screens/Bookmarks";
+import { Modalize } from "react-native-modalize";
 
 const Drawer = createDrawerNavigator();
 
@@ -22,7 +21,8 @@ const config = {
 
 const Navigation = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
-  const modalRef = React.useRef<BottomSheet>(null);
+  // const modalRef = React.useRef<BottomSheet>(null);
+  const modalRef = React.useRef<Modalize>(null);
 
   return (
     <NativeBaseProvider config={config}>
@@ -67,7 +67,8 @@ const Navigation = () => {
                   color="white"
                   backgroundColor="black"
                   onPress={() => {
-                    modalRef?.current?.expand();
+                    // modalRef?.current?.expand();
+                    modalRef.current?.open();
                     setModalOpen(true);
                   }}
                 >
@@ -75,14 +76,14 @@ const Navigation = () => {
                 </Text>
               </View>
             ),
-            drawerActiveBackgroundColor: "gray",
             headerTintColor: "white",
             headerStyle: {
               backgroundColor: "black",
               shadowColor: "transparent",
             },
             drawerStyle: { backgroundColor: "black" },
-            drawerActiveTintColor: "yellow",
+            drawerActiveBackgroundColor: "rgba(255, 255, 255, 0.1)",
+            drawerActiveTintColor: "white",
             drawerInactiveTintColor: "#999999",
             // overlayColor: "rgba(0,0,0,0.6)",
           }}
@@ -111,7 +112,7 @@ const Navigation = () => {
           >
             {() => (
               <Main
-                ref={modalRef}
+                ref={modalRef as any}
                 modalOpen={modalOpen}
                 setModalOpen={setModalOpen}
               ></Main>

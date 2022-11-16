@@ -31,13 +31,12 @@ export const useMainStore = create<MainStoreProps>((set, get) => ({
   fetch: async () => {
     let res,
       searchParams = get().filters.join(","),
-      url = "http://192.168.0.18:3002/post";
-
+      url = "http://10.0.2.2:3002/post";
     try {
       if (get().filters) url += `?tags=${searchParams}`;
       res = await axios.get(url);
     } catch {
-      console.log("error");
+      console.log("error on fetch posts");
     } finally {
       return res?.data.posts;
     }

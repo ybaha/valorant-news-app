@@ -13,20 +13,19 @@ const Main = React.forwardRef(
     const [error, setError] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [posts, setPosts] = React.useState<PostType[]>([]);
-    const [filters, setFilters] = React.useState([] as string[]);
+    const [mainFilters, setMainFilters] = React.useState([] as string[]);
 
     // console.log("main component rendered");
 
     const fetch = async () => {
       let res,
-        searchParams = filters.join(","),
-        url = "http://192.168.0.18:3002/post";
-
+        searchParams = mainFilters.join(","),
+        url = "http://10.0.2.2:3002/post";
       try {
         setLoading(true);
-        if (filters) url += `?tags=${searchParams}`;
+        if (mainFilters) url += `?tags=${searchParams}`;
         res = await axios.get(url);
-        console.log({ url });
+        // console.log({ url });
       } catch {
         console.log("error");
         setError(true);
@@ -38,7 +37,7 @@ const Main = React.forwardRef(
 
     React.useEffect(() => {
       fetch();
-    }, [filters]);
+    }, [mainFilters]);
 
     return (
       <ScreenLayout px={0} py={0}>
@@ -55,13 +54,28 @@ const Main = React.forwardRef(
             <View justifyContent="center" alignItems="center" mt={8}>
               {error && <Text color={"gray.300"}>Server Error</Text>}
               {!posts ||
-                (!posts.length && <Text color={"gray.300"}>No such post</Text>)}
+                (!posts.length && (
+                  <View>
+                    <Text color={"gray.300"}>
+                      No such post.{" "}
+                      {!!mainFilters.length && (
+                        <Text
+                          color="gray.200"
+                          underline
+                          onPress={() => setMainFilters([])}
+                        >
+                          Clear filters
+                        </Text>
+                      )}
+                    </Text>
+                  </View>
+                ))}
             </View>
           )}
         </ScrollView>
         <Modal
-          mainFilters={filters}
-          setMainFilters={setFilters}
+          mainFilters={mainFilters}
+          setMainFilters={setMainFilters}
           modalOpen={props.modalOpen}
           setModalOpen={props.setModalOpen}
           ref={ref}

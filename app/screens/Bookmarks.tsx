@@ -11,6 +11,8 @@ const Bookmarks = () => {
   const { bookmarkedPosts } = usePostStore();
   // console.log({ bookmarkedPosts });
 
+  // React.useEffect(() => {},[])
+
   return (
     <ScreenLayout px={0} py={0}>
       <ScrollView h="full">

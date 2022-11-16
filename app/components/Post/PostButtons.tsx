@@ -57,7 +57,7 @@ const PostButtons: React.FC<PostButtonsProps> = ({
   const handleReport = async () => {
     let res;
     try {
-      res = await axios.post("http://192.168.0.18:3002/post/report", {
+      res = await axios.post("http://10.0.2.2:3002/post/report", {
         postId,
         isUndo: isReported,
       });
@@ -116,7 +116,7 @@ const PostButtons: React.FC<PostButtonsProps> = ({
         bookmarked,
       });
     }
-    const res = await axios.post("http://192.168.0.18:3002/post/vote", req);
+    const res = await axios.post("http://10.0.2.2:3002/post/vote", req);
     setVotes({ upvotes: res.data.upvotes, downvotes: res.data.downvotes });
   };
 

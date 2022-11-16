@@ -15,8 +15,8 @@ const Post: React.FC<PostProps> = (props) => {
   const video = React.useRef<any>(null);
   const [status, setStatus] = React.useState({} as AVPlaybackStatus);
 
-  const date = new Date(props.data.createdAt).toLocaleDateString();
-
+  const dateString = new Date(props.data.createdAt).toDateString();
+  const date = dateString.slice(dateString.indexOf(" ") + 1, dateString.length);
   return (
     <Box
       marginTop={props.name === "0" ? 0 : 4}

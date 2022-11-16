@@ -2,9 +2,10 @@ import express from "express";
 import { Post, Prisma, PrismaClient } from "@prisma/client";
 import cors from "cors";
 import bodyParser from "body-parser";
+import { maps, agents, tags } from "../../app/utils/filter-constants";
 
 const app = express();
-const port = 3002;
+const port = process.env.NODE_ENV === "production" ? 3003 : 3002;
 const prisma = new PrismaClient();
 
 app.use(cors());
@@ -19,18 +20,22 @@ app.get("/post", async (req: any, res) => {
   let posts;
   let tags = req.query.tags;
 
-  if (tags) {
-    tags = tags.split(",");
-    posts = await prisma.post.findMany({
-      where: { tags: { hasEvery: [...tags] } },
-      orderBy: { createdAt: "desc" },
-      take: 10,
-    });
-  } else
-    posts = await prisma.post.findMany({
-      take: 10,
-      orderBy: { createdAt: "desc" },
-    });
+  try {
+    if (tags) {
+      tags = tags.split(",");
+      posts = await prisma.post.findMany({
+        where: { tags: { hasEvery: [...tags] } },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      });
+    } else
+      posts = await prisma.post.findMany({
+        take: 10,
+        orderBy: { createdAt: "desc" },
+      });
+  } catch (e) {
+    console.log(e, "\n error on get /post");
+  }
 
   res.send({ posts });
 });
@@ -41,24 +46,30 @@ const createPost = (d: Post) => {
   });
 };
 
-const maps = ["Haven", "Fracture", "Icebox", "Ascent", "Split", "Bind"];
-
 const sortTags = (tags: string[]) => {
   let firstArray: string[] = [];
   let secondArray: string[] = [];
+  let thirdArray: string[] = [];
   tags.forEach((tag) => {
+    if (agents.includes(tag)) firstArray.push(tag);
     if (maps.includes(tag)) secondArray.push(tag);
-    else firstArray.push(tag);
+    else thirdArray.push(tag);
   });
   firstArray = firstArray.sort((a, b) => a.localeCompare(b));
   secondArray = secondArray.sort((a, b) => a.localeCompare(b));
-  return [...firstArray, ...secondArray];
+  thirdArray = thirdArray.sort((a, b) => a.localeCompare(b));
+  return [...firstArray, ...secondArray, ...thirdArray];
 };
 
 app.post("/post/create", async (req, res) => {
+  const password = req.headers["password"];
   let post;
   const data = createPost(req.body);
   data.tags = sortTags(data.tags);
+
+  if (password != "202cb962ac59075b964b07152d234b70") {
+    return res.send({ error: "Not authorized" });
+  }
 
   try {
     post = await prisma.post.create({ data });
@@ -70,19 +81,23 @@ app.post("/post/create", async (req, res) => {
 });
 
 app.post("/post/report", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const postId = req.body.postId;
   const isUndo = req.body.isUndo;
   if (!postId || typeof isUndo == "undefined") return;
 
   const val = isUndo ? -1 : 1;
 
-  const post = await prisma.post.update({
-    where: { id: postId },
-    data: { reportCount: { increment: val } },
-  });
-
-  return res.send({ reportCount: post.reportCount });
+  let post;
+  try {
+    post = await prisma.post.update({
+      where: { id: postId },
+      data: { reportCount: { increment: val } },
+    });
+  } catch (e) {
+    console.log(e, "\n Report error", "\n post id" + postId);
+  }
+  return res.send({ reportCount: post?.reportCount });
 });
 
 app.post("/post/vote", async (req, res) => {
@@ -94,6 +109,7 @@ app.post("/post/vote", async (req, res) => {
     postId,
   } = req.body;
   let post;
+
   try {
     if (upvote) {
       if (shouldUndoUpvoteFirst)
@@ -139,5 +155,7 @@ app.post("/post/vote", async (req, res) => {
 // app.post('post/update/:id')
 
 app.listen(port, () => {
-  console.log(`💎 App listening on port ${port}`);
+  console.log(
+    `💎 App listening on port ${port} NODE_ENV: ${process.env.NODE_ENV}`
+  );
 });
