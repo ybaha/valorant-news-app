@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { AVPlaybackStatus, Video } from "expo-av";
+import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
 import React from "react";
 import { View, Text, Box } from "native-base";
 import Badges from "../BadgeBox";
@@ -63,7 +63,7 @@ const Post: React.FC<PostProps> = (props) => {
             uri: props.data.videoUrl,
           }}
           useNativeControls
-          resizeMode="contain"
+          resizeMode={ResizeMode.CONTAIN}
           isLooping={false}
           onPlaybackStatusUpdate={(status) => setStatus(() => status)}
           // accessible={!isVideoRunning || isVideoRunning == name}

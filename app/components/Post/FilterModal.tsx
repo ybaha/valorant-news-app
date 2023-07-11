@@ -374,6 +374,7 @@ type ColoredBoxProps = {
   color2: string;
   title: string;
   minHeight?: number;
+  children: React.ReactNode;
 };
 
 const ColoredBox: React.FC<ColoredBoxProps> = (p) => {

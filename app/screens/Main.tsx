@@ -15,17 +15,15 @@ const Main = React.forwardRef(
     const [posts, setPosts] = React.useState<PostType[]>([]);
     const [mainFilters, setMainFilters] = React.useState([] as string[]);
 
-    // console.log("main component rendered");
-
     const fetch = async () => {
       let res,
         searchParams = mainFilters.join(","),
         url = "http://10.0.2.2:3002/post";
+
       try {
         setLoading(true);
         if (mainFilters) url += `?tags=${searchParams}`;
         res = await axios.get(url);
-        // console.log({ url });
       } catch {
         console.log("error");
         setError(true);

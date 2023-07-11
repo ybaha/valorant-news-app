@@ -1,6 +1,13 @@
 export const maps = ["Haven", "Fracture", "Ascent", "Icebox", "Split", "Bind"];
 
-export const tags = ["Bug", "Lineup", "News"];
+export const tags = [
+  "Bug",
+  "Lineup",
+  "News",
+  "Gameplay",
+  "Educational",
+  "Meta",
+];
 
 export const tagsColors = {
   Educational: "green",

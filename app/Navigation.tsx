@@ -91,22 +91,6 @@ const Navigation = () => {
           <Drawer.Screen
             options={{
               headerTitleStyle: { color: "black" },
-              // headerRight: () => (
-              //   <View>
-              //     <Button
-              //       size="sm"
-              //       variant="link"
-              //       color="red.600"
-              //       colorScheme="red"
-              //       borderColor="red.600"
-              //       py={0.5}
-              //       _text={{ fontSize: 16, marginRight: 4 }}
-              //       onPressOut={() => setShowFilterModal(!showFilterModal)}
-              //     >
-              //       Filter
-              //     </Button>
-              //   </View>
-              // ),
             }}
             name="Feed"
           >

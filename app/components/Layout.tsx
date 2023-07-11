@@ -19,6 +19,7 @@ type ScreenLayoutProps = {
   spinners?: boolean;
   py?: number;
   px?: number;
+  children?: React.ReactNode;
 };
 
 const ScreenLayout: React.FC<ScreenLayoutProps> = ({
